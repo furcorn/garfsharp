@@ -9,11 +9,6 @@
 			// These are ComicSources. It contains information of the name of the source, the URL format, whether or not it's an HTML and regex for the data.
 			// maxDate and minDate will override the top-layer date settings
 			{
-				"name": "the-eye",
-				"urlFormat": "https://the-eye.eu/public/Comics/Garfield/{0:yyyy-MM-dd}.gif",
-				"maxDate": "2020-07-21"
-			},
-			{
 				"name": "GoComics",
 				"urlFormat": "https://www.gocomics.com/garfield/{0:yyyy}/{0:MM}/{0:dd}",
 				"isHtml": true,
@@ -22,6 +17,11 @@
 					"expression": "item-comic-image.*data-srcset=\"(.*?) (.*?)(,|\")",
 					"group": 1
 				}
+			},
+			{
+				"name": "the-eye",
+				"urlFormat": "https://the-eye.eu/public/Comics/Garfield/{0:yyyy-MM-dd}.gif",
+				"maxDate": "2020-07-21"
 			},
 			{
 				"name": "Uclick",
