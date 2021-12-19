@@ -12,8 +12,6 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Media;
-// using System.Reflection;
-// using System.Text.RegularExpressions;
 
 public class Garfield : Form
 {
@@ -52,13 +50,6 @@ public class Garfield : Form
 		"now with GitHub automation!"
 	};
 	private CancellationTokenSource ctk = new CancellationTokenSource();
-	public Bitmap shittyCopy(Image bitmap){
-		Bitmap bm = new Bitmap(bitmap.Width, bitmap.Height);
-		using(Graphics g = Graphics.FromImage(bm)){
-			g.DrawImage(bitmap, 0, 0, new RectangleF(new Point(0, 0), new Size(bitmap.Width, bitmap.Height)), GraphicsUnit.Pixel);
-		};
-		return bm;
-	}
 	ToolStripMenuItem file;
 	ToolStripMenuItem comic;
 	ToolStripMenuItem gimmick;
@@ -356,18 +347,6 @@ public class Garfield : Form
 		Clipboard.SetData(DataFormats.Text, (Object)await currentcomic.source.fetchURL(stripretriever, ctk, date.Value));//(Object)String.Format(currentcomic.urlFormat, date.Value));
 	}
 
-	private Image drawMessage(string message, int size = 96)
-	{
-		Image img = new Bitmap(1200, 350);
-		Graphics graph = Graphics.FromImage(img);
-		graph.Clear(Color.Gray);
-		StringFormat idiot = new StringFormat();
-		idiot.Alignment = StringAlignment.Center;
-		idiot.LineAlignment = StringAlignment.Center;
-		graph.DrawString(message, new Font("Arial", size), new SolidBrush(Color.FromArgb(48, 48, 48)), new PointF(600, 175), idiot);
-		return img;
-	}
-
 	private async void strip_update(object sender, EventArgs e)
 	{
 		statusprogress.Visible = true;
@@ -392,11 +371,11 @@ public class Garfield : Form
 			}
 			catch (FileNotFoundException suck)
 			{
-				img = drawMessage("not found");
+				img = BitmapUtils.drawMessage("not found");
 			}
 			catch(IOException suck)
 	        {
-				img = drawMessage("i/o exception.\nyour file must be locked.", 36);
+				img = BitmapUtils.drawMessage("i/o exception.\nyour file must be locked.", 36);
 			}
 		}
 		else{
@@ -414,18 +393,18 @@ public class Garfield : Form
 			catch (HttpRequestException suck)
 			{
 				//MessageBox.Show(suck.ToString());
-				img = drawMessage(((int)(response.StatusCode)).ToString());
+				img = BitmapUtils.drawMessage(((int)(response.StatusCode)).ToString());
 			}
 			catch(ArgumentException suck)
 			{
-				img = drawMessage("an error occured while\nprocessing the image", 36);
+				img = BitmapUtils.drawMessage("an error occured while\nprocessing the image", 36);
 			}
 		}
-		Bitmap bm = this.shittyCopy(img); // wish i could be using "using" here
+		Bitmap bm = BitmapUtils.shittyCopy(img); // wish i could be using "using" here
 		foreach(Gimmick gimmick in gimmicks.gimmicks){
 			if(gimmick.enabled){
 				img = gimmick.doIt(bm, img, currentcomic);
-				bm = this.shittyCopy(img);
+				bm = BitmapUtils.shittyCopy(img);
 				// just found out Bitmap extends Image. what a waste
 				// THis is prone to exceptions and im not doing anything abouti t
 			}
