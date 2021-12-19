@@ -3,11 +3,11 @@ on:
   push:
     branches: [ master ]
     paths:
-      - "garfield.cs"
+      - "src/*.cs"
   pull_request:
     branches: [ master ]
     paths:
-      - "garfield.cs"
+      - "src/*.cs"
 jobs:
   build:
     runs-on: windows-latest
