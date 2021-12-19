@@ -1,4 +1,6 @@
-Garfield.exe
-Garfield.pdb
-GarfSharp.zip
-recompile.bat
+*.bat
+*.zip
+*.exe
+*.dll
+*.pdb
+gnorm*/
