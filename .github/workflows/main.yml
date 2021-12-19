@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: compile using csc
-        run: csc\csc.exe -debug:full -r:Newtonsoft.Json.dll -r:System.Net.Http.dll -out:Garfield.exe -target:winexe *.cs
+        run: csc\csc.exe -debug:full -r:Newtonsoft.Json.dll -r:System.Net.Http.dll -out:Garfield.exe -target:winexe src/*.cs
       - name: artifect
         uses: actions/upload-artifact@v2.1.4
         with:
