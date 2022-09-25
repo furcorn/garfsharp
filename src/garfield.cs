@@ -15,22 +15,13 @@ using System.Media;
 
 public class Garfield : Form
 {
-	public TableLayoutPanel panel;
-	public TableLayoutPanel picker;
-	public Button previous;
-	public DateTimePicker date;
-	public Button next;
-	public PictureBox strip;
+	// Core stuff
+
 	public static HttpClient stripretriever;
-	public ContextMenuStrip stripmenu;
-	public StatusStrip status;
-	public ToolStripStatusLabel statuscomic;
-	public ToolStripStatusLabel statusdate;
-	public ToolStripProgressBar statusprogress;
-	public MenuStrip menu;
 	public List<Comic> comics;
 	public CurrentComicInfo currentcomic;
 	public Gimmicks gimmicks;
+	
 	public string[] taglines = new string[] {
 		"now with 15% more C#!",
 		"just like the web verison, but standalone!",
@@ -47,21 +38,41 @@ public class Garfield : Form
 		"now with Funny Ideas to spice up the comic!",
 		"now with more classes and lambda expressions!",
 		"now in Three Parts!",
-		"now with GitHub automation!"
+		"now with GitHub automation!",
+		"now with less UI spaghetti!",
+		"now with 50% more MenuItems!"
 	};
 	private CancellationTokenSource ctk = new CancellationTokenSource();
-	ToolStripMenuItem file;
-	ToolStripMenuItem comic;
-	ToolStripMenuItem gimmick;
-	List<ToolStripMenuItem> gimmickMenus = new List<ToolStripMenuItem>();
-	ToolStripMenuItem change;
-	ToolStripMenuItem save;
-	ToolStripMenuItem copy;
-	ToolStripMenuItem copyURL;
-	ToolStripMenuItem nextstrip;
-	ToolStripMenuItem previousstrip;
-	ToolStripMenuItem gorando;
-	ToolStripMenuItem exit;
+
+	// UI - top bar
+
+	public MainMenu menu;
+
+	List<MenuItem> gimmickMenus = new List<MenuItem>();
+
+	MenuItem file;
+	MenuItem comic;
+	MenuItem gimmick;
+	MenuItem change;
+
+	// UI - main view
+
+	public TableLayoutPanel panel;
+	public TableLayoutPanel picker;
+	public Button previous;
+	public DateTimePicker date;
+	public Button next;
+	public PictureBox strip;
+
+	public ContextMenu stripmenu;
+
+	// UI - status bar
+
+	public StatusStrip status;
+	public ToolStripStatusLabel statuscomic;
+	public ToolStripStatusLabel statusdate;
+	public ToolStripProgressBar statusprogress;
+	
 	public Garfield()
 	{
 		try
@@ -111,34 +122,112 @@ public class Garfield : Form
 				}
 			]");
 		}
-		file = new ToolStripMenuItem("&File");
-		comic = new ToolStripMenuItem("&Comic");
-		gimmick = new ToolStripMenuItem("&Gimmicks");
-		gimmicks = new Gimmicks();
-		foreach(Gimmick gimmick in gimmicks.gimmicks){
-			ToolStripMenuItem temp = new ToolStripMenuItem(gimmick.contentlabel, null);
-			temp.Click += (sender, e) => strip_gimmick(sender, e, gimmick);// Not using the EventHandler in constructor this time lol
-			gimmickMenus.Add(temp);
-		}
-		change = new ToolStripMenuItem("&Change comic");
-		save = new ToolStripMenuItem("&Save strip", null, new EventHandler(strip_save), (Keys.Control | Keys.S));
-		copy = new ToolStripMenuItem("&Copy strip image to clipboard", null, new EventHandler(strip_copy), (Keys.Control | Keys.C));
-		copyURL = new ToolStripMenuItem("Copy strip &URL to clipboard", null, new EventHandler(strip_copyURL), (Keys.Control | Keys.Shift | Keys.C));
-		nextstrip = new ToolStripMenuItem("&Next strip", null, new EventHandler(strip_next));
-		previousstrip = new ToolStripMenuItem("&Previous strip", null, new EventHandler(strip_previous));
-		gorando = new ToolStripMenuItem("&Go rando", null, new EventHandler(strip_rando));
-		exit = new ToolStripMenuItem("E&xit", null, new EventHandler(delegate (object sender, EventArgs e) { this.Close(); }), (Keys.Alt | Keys.F4));
+
+		// Core
+
+		stripretriever = new HttpClient();
 		currentcomic = new CurrentComicInfo(comics[0], comics[0].sources[0]);
+		System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
+		stripretriever.DefaultRequestHeaders.UserAgent.TryParseAdd("Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+
+		// UI - root
+
 		this.AutoSize = true;
 		this.MinimumSize = new Size(661, 480);
 		this.Text = @"Garfield strip picker - " + taglines[new Random().Next(0, taglines.Length)];
-		stripretriever = new HttpClient();
-		System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
-		stripretriever.DefaultRequestHeaders.UserAgent.TryParseAdd("Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
-		// fuck you msdn you lied to me
-		/*stripretriever.DownloadProgressChanged += new DownloadProgressChangedEventHandler(delegate (object sender, DownloadProgressChangedEventArgs e) {
-			statusprogress.Value = e.ProgressPercentage;
-		});*/
+
+		// UI - top bar
+
+		// Why is MainMenu not supported? It's native for God's sake!!!
+		// MenuStrip looks stupid and makes my app look like it came out of Office!!!
+
+		menu = new MainMenu();
+
+		file = new MenuItem("&File");
+		comic = new MenuItem("&Comic");
+		gimmick = new MenuItem("&Gimmicks");
+
+		// File
+
+		file.MenuItems.AddRange(new MenuItem[]{
+			new MenuItem(
+				"&Save strip",
+				new EventHandler(strip_save),
+				Shortcut.CtrlS
+			),
+			new MenuItem(
+				"&Copy strip image to clipboard",
+				new EventHandler(strip_copy),
+				Shortcut.CtrlC
+			),
+			new MenuItem(
+				"Copy strip &URL to clipboard",
+				new EventHandler(strip_copyURL),
+				Shortcut.CtrlShiftC
+			),
+			new MenuItem(
+				"E&xit",
+				new EventHandler(delegate (object sender, EventArgs e) { this.Close(); }),
+				Shortcut.AltF4
+			)
+		});
+
+		// Comic
+
+		change = new MenuItem(
+			"&Change comic"
+		);
+
+		comic.MenuItems.AddRange(new MenuItem[]{
+			change,
+			new MenuItem(
+				"&Next strip",
+				new EventHandler(strip_next)
+			),
+			new MenuItem(
+				"&Previous strip",
+				new EventHandler(strip_previous)
+			),
+			new MenuItem(
+				"&Go rando",
+				new EventHandler(strip_rando)
+			)
+		});
+
+		for (int x = 0; x < comics.Count; x++)
+		{
+			// im so fucked up
+			Comic item = comics[x];
+			MenuItem fuck = new MenuItem(item.name);//, new EventHandler((sender, e) => comic_update(sender, e)));
+			for (int y = 0; y < item.sources.Count; y++){
+				ComicSource source = item.sources[y];
+				MenuItem sourcemenu = new MenuItem(source.name);
+				sourcemenu.Click += (sender, e) => comic_update(sender, e, item, source);
+				fuck.MenuItems.Add(sourcemenu);
+			}
+			change.MenuItems.Add(fuck);
+		}
+
+		// Gimmick
+
+		gimmicks = new Gimmicks();
+
+		foreach(Gimmick gimmick in gimmicks.gimmicks){
+			MenuItem temp = new MenuItem(gimmick.contentlabel);
+			temp.Click += (sender, e) => strip_gimmick(sender, e, gimmick); // Not using the EventHandler in constructor this time lol
+			gimmickMenus.Add(temp);
+		}
+
+		gimmick.MenuItems.AddRange(gimmickMenus.ToArray()); 
+
+		menu.MenuItems.AddRange(new MenuItem[]{
+			file,
+			comic,
+			gimmick,
+		});
+
+		// UI - Main view
+		
 		panel = new TableLayoutPanel();
 		panel.ColumnCount = 0;
 		panel.RowCount = 2;
@@ -146,7 +235,9 @@ public class Garfield : Form
 		panel.RowStyles.Clear();
 		panel.RowStyles.Add(new RowStyle(SizeType.Absolute, 32));
 		panel.RowStyles.Add(new RowStyle(SizeType.Percent, 90));
-		this.Controls.Add(panel);
+
+		// UI - Navbar
+		
 		picker = new TableLayoutPanel();
 		picker.ColumnCount = 3;
 		picker.RowCount = 0;
@@ -156,25 +247,13 @@ public class Garfield : Form
 		picker.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 64));
 		picker.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 90));
 		picker.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 64));
-		panel.Controls.Add(picker);
-		stripmenu = new ContextMenuStrip();
-		stripmenu.Opening += new System.ComponentModel.CancelEventHandler(delegate (object sender, CancelEventArgs e) {
-			stripmenu.Items.Clear();
-			stripmenu.Items.AddRange(new ToolStripMenuItem[]{
-				save,
-				copy,
-				copyURL,
-				nextstrip,
-				previousstrip,
-				gorando
-			});
-		});
+
 		previous = new Button();
 		previous.Dock = DockStyle.Fill;
 		previous.Text = "Previous";
 		previous.Click += new EventHandler(strip_previous);
 		previous.Anchor = AnchorStyles.Left;
-		picker.Controls.Add(previous);
+
 		date = new DateTimePicker();
 		date.MinDate = currentcomic.source.getMinDate(currentcomic.comic);
 		date.MaxDate = currentcomic.source.getMaxDate(currentcomic.comic);
@@ -183,19 +262,64 @@ public class Garfield : Form
 		date.Dock = DockStyle.Fill;
 		date.Anchor = AnchorStyles.None;
 		date.ValueChanged += new EventHandler(strip_update);
-		picker.Controls.Add(date);
+		
 		next = new Button();
 		next.Dock = DockStyle.Fill;
 		next.Text = "Next";
 		next.Click += new EventHandler(strip_next);
 		next.Anchor = AnchorStyles.Right;
+		
+		picker.Controls.Add(previous);
+		picker.Controls.Add(date);
 		picker.Controls.Add(next);
+		panel.Controls.Add(picker);
+
+		// UI - Context menu
+
+		stripmenu = new ContextMenu();
+
+		stripmenu.MenuItems.AddRange(new MenuItem[]{
+			new MenuItem(
+				"&Save strip",
+				new EventHandler(strip_save),
+				Shortcut.CtrlS
+			),
+			new MenuItem(
+				"&Copy strip image to clipboard",
+				new EventHandler(strip_copy),
+				Shortcut.CtrlC
+			),
+			new MenuItem(
+				"Copy strip &URL to clipboard",
+				new EventHandler(strip_copyURL),
+				Shortcut.CtrlShiftC
+			),
+			new MenuItem(
+				"&Next strip",
+				new EventHandler(strip_next)
+			),
+			new MenuItem(
+				"&Previous strip",
+				new EventHandler(strip_previous)
+			),
+			new MenuItem(
+				"&Go rando",
+				new EventHandler(strip_rando)
+			)
+		});
+
+		// UI - Comic strip
+
 		strip = new PictureBox();
 		strip.SizeMode = PictureBoxSizeMode.Zoom;
 		strip.Dock = DockStyle.Fill;
-		strip.ContextMenuStrip = stripmenu;
+		strip.ContextMenu = stripmenu;
 		strip.MinimumSize = new Size(640, 0);
+		
 		panel.Controls.Add(strip);
+
+		// UI - Status bar
+
 		status = new StatusStrip();
 		statuscomic = new ToolStripStatusLabel(String.Format("({0}) {1}", currentcomic.source.name, currentcomic.comic.name));
 		statusdate = new ToolStripStatusLabel();
@@ -207,49 +331,12 @@ public class Garfield : Form
 			statusdate,
 			statusprogress
 		});
+
+
+		this.Menu = menu;
+		this.Controls.Add(panel);
 		this.Controls.Add(status);
-		menu = new MenuStrip();
-		file.DropDownOpening += new EventHandler(delegate (object sender, EventArgs e) {
-			file.DropDownItems.Clear();
-			file.DropDownItems.AddRange(new ToolStripMenuItem[]{
-				save,
-				copy,
-				copyURL,
-				exit
-			});
-		});
-		comic.DropDownOpening += new EventHandler(delegate (object sender, EventArgs e) {
-			comic.DropDownItems.Clear();
-			comic.DropDownItems.AddRange(new ToolStripMenuItem[]{
-				change,
-				nextstrip,
-				previousstrip,
-				gorando
-			});
-		});
-		gimmick.DropDownOpening += new EventHandler(delegate (object sender, EventArgs e) {
-			gimmick.DropDownItems.Clear();
-			gimmick.DropDownItems.AddRange(gimmickMenus.ToArray()); 
-		});
-		for (int x = 0; x < comics.Count; x++)
-		{
-			// im so fucked up
-			Comic item = comics[x];
-			ToolStripMenuItem fuck = new ToolStripMenuItem(item.name, null);//, new EventHandler((sender, e) => comic_update(sender, e)));
-			for (int y = 0; y < item.sources.Count; y++){
-				ComicSource source = item.sources[y];
-				ToolStripMenuItem sourcemenu = new ToolStripMenuItem(source.name, null);
-				sourcemenu.Click += (sender, e) => comic_update(sender, e, item, source);
-				fuck.DropDownItems.Add(sourcemenu);
-			}
-			change.DropDownItems.Add(fuck);
-		}
-		menu.Items.AddRange(new ToolStripItem[]{
-			file,
-			comic,
-			gimmick
-		});
-		this.Controls.Add(menu);
+
 		strip_rando(null, null);
 		strip_update(null, null);
 	}
@@ -434,7 +521,7 @@ public class Garfield : Form
 	private void strip_gimmick(object sender, EventArgs e, Gimmick gimmick){
 		//i had a slightly better idea of doing this but csc hated it
 		// well this is a slightly better idea of doing this now
-		ToolStripMenuItem gimmickItem = sender as ToolStripMenuItem;
+		MenuItem gimmickItem = sender as MenuItem;
 		if(gimmickItem==null) return; //wanted to add checks for tags too but i cant figure that out
 		gimmickItem.Checked = !gimmickItem.Checked;
 		gimmick.enabled = gimmickItem.Checked;
