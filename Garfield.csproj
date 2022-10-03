@@ -13,7 +13,7 @@
 	</ItemGroup>
 	<Target Name="Build">
 		<MakeDir Directories="$(Bin)"/>
-		<Csc Sources="@(Compile)" References="@(Reference)" OutputAssembly="$(Bin)\$(AppName).exe" DebugType="Full"/>
+		<Csc Sources="@(Compile)" References="@(Reference)" OutputAssembly="$(Bin)\$(AppName).exe" DebugType="Full" TargetType="winexe"/>
 		<Copy
 			SourceFiles="@(Reference)"
 			DestinationFolder="$(Bin)"
