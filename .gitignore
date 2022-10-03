@@ -1,7 +1,2 @@
-*.bat
-*.zip
-*.exe
-*.dll
-*.pdb
 gnorm*/
 bin/
