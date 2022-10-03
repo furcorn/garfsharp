@@ -15,7 +15,10 @@ jobs:
       - name: setup msbuild
         uses: microsoft/setup-msbuild@v1.1
 
-      - uses: actions/checkout@v2
+      - name: checkout repo
+        uses: actions/checkout@v2
+
+      - name: build with msbuild
         run: msbuild Garfield.csproj -t:Build
 
       - name: artifact
