@@ -1,0 +1,22 @@
+<Project>
+	<PropertyGroup>
+		<AppName>GarfSharp</AppName>
+		<Lib>lib</Lib>
+		<Bin>bin</Bin>
+		<Src>src</Src>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="$(Lib)/*.dll"/>
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="$(Src)/*.cs"/>
+	</ItemGroup>
+	<Target Name="Build">
+		<MakeDir Directories="$(Bin)"/>
+		<Csc Sources="@(Compile)" References="@(Reference)" OutputAssembly="$(Bin)\$(AppName).exe" DebugType="Full"/>
+		<Copy
+			SourceFiles="@(Reference)"
+			DestinationFolder="$(Bin)"
+		/>
+	</Target>
+</Project>
