@@ -6,6 +6,9 @@
 		<Src>src</Src>
 	</PropertyGroup>
 	<ItemGroup>
+		<_Resources Include="resource\**\*.*"/>
+	</ItemGroup>
+	<ItemGroup>
 		<Reference Include="$(Lib)/*.dll"/>
 	</ItemGroup>
 	<ItemGroup>
@@ -17,6 +20,14 @@
 		<Copy
 			SourceFiles="@(Reference)"
 			DestinationFolder="$(Bin)"
+		/>
+		<Copy
+			SourceFiles="strips.json"
+			DestinationFolder="$(Bin)"
+		/>
+		<Copy
+			SourceFiles="@(_Resources)"
+			DestinationFiles="@(_Resources->'$(Bin)\resource\%(RecursiveDir)%(Filename)%(Extension)')"
 		/>
 	</Target>
 </Project>

@@ -1,0 +1,26 @@
+name: Compile
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'src/**.cs'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'src/**.cs'
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: setup msbuild
+        uses: microsoft/setup-msbuild@v1.1
+
+      - uses: actions/checkout@v2
+        run: msbuild Garfield.csproj -t:Build
+
+      - name: artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: GarfSharp
+          path: |
+            bin/
