@@ -40,7 +40,8 @@ public class Garfield : Form
 		"now in Three Parts!",
 		"now with GitHub automation!",
 		"now with less UI spaghetti!",
-		"now with 50% more MenuItems!"
+		"now with 50% more MenuItems!",
+		"now streamlined with MSBuild!"
 	};
 	private CancellationTokenSource ctk = new CancellationTokenSource();
 
