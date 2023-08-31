@@ -347,7 +347,7 @@ public class Garfield : Form
 		{
 			date.Value = date.Value.AddDays(-currentcomic.comic.weekinfo.increment);
 		}
-		catch (ArgumentOutOfRangeException suck)
+		catch (ArgumentOutOfRangeException)
 		{
 			//let user know we are reaching oob
 			SystemSounds.Beep.Play();
@@ -359,7 +359,7 @@ public class Garfield : Form
 		{
 			date.Value = date.Value.AddDays(currentcomic.comic.weekinfo.increment);
 		}
-		catch (ArgumentOutOfRangeException suck)
+		catch (ArgumentOutOfRangeException)
 		{
 			//let user know we are reaching oob
 			SystemSounds.Beep.Play();
@@ -385,7 +385,7 @@ public class Garfield : Form
 				date.Value = rd;
 			}
 		}
-		catch (ArgumentOutOfRangeException suck)
+		catch (ArgumentOutOfRangeException)
 		{
 			//Out of range? reroll again
 			strip_rando(sender, e);
@@ -457,11 +457,11 @@ public class Garfield : Form
 				FileStream fs = await Task.Run(() => File.OpenRead(path));//File.OpenRead(path); its asynchronous now lol
 				img = Image.FromStream(fs, false, false);
 			}
-			catch (FileNotFoundException suck)
+			catch (FileNotFoundException)
 			{
 				img = BitmapUtils.drawMessage("not found");
 			}
-			catch(IOException suck)
+			catch(IOException)
 	        {
 				img = BitmapUtils.drawMessage("i/o exception.\nyour file must be locked.", 36);
 			}
@@ -478,12 +478,12 @@ public class Garfield : Form
 				Stream stream = await response.Content.ReadAsStreamAsync();
 				img = Image.FromStream(stream, false, false);
 			}
-			catch (HttpRequestException suck)
+			catch (HttpRequestException)
 			{
 				//MessageBox.Show(suck.ToString());
 				img = BitmapUtils.drawMessage(((int)(response.StatusCode)).ToString());
 			}
-			catch(ArgumentException suck)
+			catch(ArgumentException)
 			{
 				img = BitmapUtils.drawMessage("an error occured while\nprocessing the image", 36);
 			}
@@ -491,7 +491,7 @@ public class Garfield : Form
 		Bitmap bm = BitmapUtils.shittyCopy(img); // wish i could be using "using" here
 		foreach(Gimmick gimmick in gimmicks.gimmicks){
 			if(gimmick.enabled){
-				img = gimmick.doIt(bm, img, currentcomic);
+				img = gimmick.doIt(bm, img, currentcomic, date.Value);
 				bm = BitmapUtils.shittyCopy(img);
 				// just found out Bitmap extends Image. what a waste
 				// THis is prone to exceptions and im not doing anything abouti t
