@@ -59,7 +59,6 @@ public class Garfield : Form
 	// UI - main view
 
 	public TableLayoutPanel panel;
-	public TableLayoutPanel picker;
 	public Button previous;
 	public DateTimePicker date;
 	public Button next;
@@ -230,30 +229,28 @@ public class Garfield : Form
 		// UI - Main view
 		
 		panel = new TableLayoutPanel();
-		panel.ColumnCount = 0;
+		panel.ColumnCount = 3;
 		panel.RowCount = 2;
 		panel.Dock = DockStyle.Fill;
 		panel.RowStyles.Clear();
 		panel.RowStyles.Add(new RowStyle(SizeType.Absolute, 32));
-		panel.RowStyles.Add(new RowStyle(SizeType.Percent, 90));
+		panel.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+		panel.ColumnStyles.Clear();
+		panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 64));
+		panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
+		panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 64));
 
 		// UI - Navbar
-		
-		picker = new TableLayoutPanel();
-		picker.ColumnCount = 3;
-		picker.RowCount = 0;
-		picker.Dock = DockStyle.Fill;
-		picker.AutoSize = true;
-		picker.ColumnStyles.Clear();
-		picker.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 64));
-		picker.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 90));
-		picker.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 64));
 
 		previous = new Button();
 		previous.Dock = DockStyle.Fill;
 		previous.Text = "Previous";
 		previous.Click += new EventHandler(strip_previous);
 		previous.Anchor = AnchorStyles.Left;
+		panel.SetColumn(previous, 0);
+		panel.SetColumnSpan(previous, 1);
+		panel.SetRow(previous, 0);
+		panel.SetRowSpan(previous, 1);
 
 		date = new DateTimePicker();
 		date.MinDate = currentcomic.source.getMinDate(currentcomic.comic);
@@ -263,17 +260,24 @@ public class Garfield : Form
 		date.Dock = DockStyle.Fill;
 		date.Anchor = AnchorStyles.None;
 		date.ValueChanged += new EventHandler(strip_update);
+		panel.SetColumn(date, 1);
+		panel.SetColumnSpan(date, 1);
+		panel.SetRow(date, 0);
+		panel.SetRowSpan(date, 1);
 		
 		next = new Button();
 		next.Dock = DockStyle.Fill;
 		next.Text = "Next";
 		next.Click += new EventHandler(strip_next);
 		next.Anchor = AnchorStyles.Right;
+		panel.SetColumn(next, 2);
+		panel.SetColumnSpan(next, 1);
+		panel.SetRow(next, 0);
+		panel.SetRowSpan(next, 1);
 		
-		picker.Controls.Add(previous);
-		picker.Controls.Add(date);
-		picker.Controls.Add(next);
-		panel.Controls.Add(picker);
+		panel.Controls.Add(previous);
+		panel.Controls.Add(date);
+		panel.Controls.Add(next);
 
 		// UI - Context menu
 
@@ -316,6 +320,10 @@ public class Garfield : Form
 		strip.Dock = DockStyle.Fill;
 		strip.ContextMenu = stripmenu;
 		strip.MinimumSize = new Size(640, 0);
+		panel.SetColumn(strip, 0);
+		panel.SetColumnSpan(strip, 3);
+		panel.SetRow(strip, 1);
+		panel.SetRowSpan(strip, 1);
 		
 		panel.Controls.Add(strip);
 
