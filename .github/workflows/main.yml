@@ -8,6 +8,10 @@ on:
     branches: [ master ]
     paths:
       - 'src/**.cs'
+  workflow_dispatch:
+    branches: [ master ]
+    paths:
+      - 'src/**.cs'
 jobs:
   build:
     runs-on: windows-latest
