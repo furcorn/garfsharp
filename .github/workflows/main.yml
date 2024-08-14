@@ -17,6 +17,9 @@ jobs:
 
       - name: checkout repo
         uses: actions/checkout@v2
+
+      - name: run package restore
+        run: nuget restore Garfield.csproj
       
       - name: build makeres
         run: msbuild makeres.csproj -t:Build
