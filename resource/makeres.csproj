@@ -7,9 +7,6 @@
 	</ItemGroup>
 	<Target Name="Build">
 		<Csc Sources="@(Compile)" References="@(Reference)" OutputAssembly="$(AppName).exe" DebugType="Full" TargetType="winexe"/>
-		<Copy
-			SourceFiles="@(Reference)"
-			DestinationFolder="."
-		/>
+		<Exec Command="$(AppName).exe"/>
 	</Target>
 </Project>
