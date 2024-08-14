@@ -1,33 +1,43 @@
-<Project>
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
 	<PropertyGroup>
-		<AppName>GarfSharp</AppName>
-		<Lib>lib</Lib>
-		<Bin>bin</Bin>
-		<Src>src</Src>
+		<ProjectGuid>8aa60d6c-f075-4609-aa8c-2d7849e00f47</ProjectGuid>
+		<OutputType>WinExe</OutputType>
+		<RootNamespace>GarfSharp</RootNamespace>
+		<AssemblyName>GarfSharp</AssemblyName>
+		<TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+		<LangVersion>8.0</LangVersion>
+		<FileAlignment>512</FileAlignment>
+		<Deterministic>true</Deterministic>
+	</PropertyGroup>
+	<PropertyGroup>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<DebugType>pdbonly</DebugType>
+		<Optimize>true</Optimize>
+		<OutputPath>bin\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
 	</PropertyGroup>
 	<ItemGroup>
-		<_Resources Include="resource\**\*.*"/>
+		<Reference Include="System"/>
+		<Reference Include="System.Core"/>
+		<Reference Include="System.Xml.Linq"/>
+		<Reference Include="System.Data.DataSetExtensions"/>
+		<Reference Include="Microsoft.CSharp"/>
+		<Reference Include="System.Data"/>
+		<Reference Include="System.Deployment"/>
+		<Reference Include="System.Drawing"/>
+		<Reference Include="System.Windows.Forms"/>
+		<Reference Include="System.Xml"/>
+		<Reference Include="System.Net.Http"/>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 	<ItemGroup>
-		<Reference Include="$(Lib)/*.dll"/>
+		<Compile Include="src/*.cs" />
+		<Reference Include="lib/*.dll"/>
+		<EmbeddedResource Include="resource\resources.resx" LogicalName="GarfSharp.resources"/>
 	</ItemGroup>
-	<ItemGroup>
-		<Compile Include="$(Src)/*.cs"/>
-	</ItemGroup>
-	<Target Name="Build">
-		<MakeDir Directories="$(Bin)"/>
-		<Csc Sources="@(Compile)" References="@(Reference)" OutputAssembly="$(Bin)\$(AppName).exe" DebugType="Full" TargetType="winexe"/>
-		<Copy
-			SourceFiles="@(Reference)"
-			DestinationFolder="$(Bin)"
-		/>
-		<Copy
-			SourceFiles="strips.json"
-			DestinationFolder="$(Bin)"
-		/>
-		<Copy
-			SourceFiles="@(_Resources)"
-			DestinationFiles="@(_Resources->'$(Bin)\resource\%(RecursiveDir)%(Filename)%(Extension)')"
-		/>
-	</Target>
+	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

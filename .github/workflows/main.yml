@@ -17,9 +17,17 @@ jobs:
 
       - name: checkout repo
         uses: actions/checkout@v2
+      
+      - name: build makeres
+        run: msbuild makeres.csproj -t:Build
+        working-directory: resource/
+      
+      - name: generate resources
+        run: makeres
+        working-directory: resource/
 
-      - name: build with msbuild
-        run: msbuild Garfield.csproj -t:Build
+      - name: build garfsharp
+        run: msbuild Garfield.csproj
 
       - name: artifact
         uses: actions/upload-artifact@v3.1.0

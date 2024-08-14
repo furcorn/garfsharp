@@ -28,25 +28,23 @@ public class Gimmick {
 
 public class PanelReplace : Gimmick {
 	
-	public string replacePath;
+	public Bitmap replaceWith;
 
-	public PanelReplace(string name, string replacePath) : base(name){
-			this.replacePath = replacePath;
+	public PanelReplace(string name, Bitmap replaceWith) : base(name){
+			this.replaceWith = replaceWith;
 			this.doIt = delegate(Bitmap bm, Image img, CurrentComicInfo curcomic, DateTime date){
-				if(File.Exists(this.replacePath)){
-					using(Bitmap pipeunscale = new Bitmap(this.replacePath)){
-						int width = img.Width/(curcomic.comic.numPanels);
-						if(img.Width <= 800){
-							width = img.Width/2; // Two panel must be enabled
-						}
-						//img.Width>=1195&&img.Width<=1205?pipeunscale.Width:(int)(img.Width/3);
-						Bitmap pipebm = new Bitmap(pipeunscale, new Size(width, img.Height));
-						using(Graphics g = Graphics.FromImage(bm)){
-							g.DrawImage(bm, 0, 0, new RectangleF(new Point(0, 0), new Size(bm.Width,bm.Height)), GraphicsUnit.Pixel);
-							g.DrawImage(pipebm, bm.Width-pipebm.Width, 0, new RectangleF(new Point(0, 0), new Size(pipebm.Width,pipebm.Height)), GraphicsUnit.Pixel);
-						};
-						pipebm.Dispose();
+				using(Bitmap pipeunscale = (Bitmap)replaceWith.Clone()){
+					int width = img.Width/(curcomic.comic.numPanels);
+					if(img.Width <= 800){
+						width = img.Width/2; // Two panel must be enabled
 					}
+					//img.Width>=1195&&img.Width<=1205?pipeunscale.Width:(int)(img.Width/3);
+					Bitmap pipebm = new Bitmap(pipeunscale, new Size(width, img.Height));
+					using(Graphics g = Graphics.FromImage(bm)){
+						g.DrawImage(bm, 0, 0, new RectangleF(new Point(0, 0), new Size(bm.Width,bm.Height)), GraphicsUnit.Pixel);
+						g.DrawImage(pipebm, bm.Width-pipebm.Width, 0, new RectangleF(new Point(0, 0), new Size(pipebm.Width,pipebm.Height)), GraphicsUnit.Pixel);
+					};
+					pipebm.Dispose();
 				}
 				return bm;
 			}; 
@@ -159,11 +157,11 @@ public class HeathcliffCrop : SimpleCrop {
 public class Gimmicks {
 	public Gimmicks()
 	{
-		Gimmick pipe = new PanelReplace("Pipe", "./resource/pipe.png");
-		Gimmick deflated = new PanelReplace("Deflated", "./resource/deflated.png");			
-		Gimmick window = new PanelReplace("Window", "./resource/window.png");
-		Gimmick twopanel = new PanelCrop("Two panels", 2);
-		Gimmick nocaption = new HeathcliffCrop("No caption");
+		Gimmick pipe		= new PanelReplace("Pipe",	(Bitmap)Garfield.resources.GetObject("pipe"));
+		Gimmick deflated	= new PanelReplace("Deflated",	(Bitmap)Garfield.resources.GetObject("deflated"));
+		Gimmick window		= new PanelReplace("Window",	(Bitmap)Garfield.resources.GetObject("window"));
+		Gimmick twopanel	= new PanelCrop("Two panels", 2);
+		Gimmick nocaption	= new HeathcliffCrop("No caption");
 		// Gimmick twopanel = new Gimmick("Two panels", delegate(Bitmap bm, Image img, CurrentComicInfo curcomic){
 		// 	float width = (float)img.Width*(2.0f/curcomic.comic.numPanels); // JUST USE DECIMALS ALREADY!!! STOP DOING THE FUCKING THING IN INTEGERS
 		// 	bm = new Bitmap((int)width, img.Height);

@@ -1,2 +1,5 @@
-gnorm*/
 bin/
+obj/
+resource/*.exe
+resource/*.pdb
+resource/*.resx

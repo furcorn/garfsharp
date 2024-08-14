@@ -1,0 +1,15 @@
+<Project>
+	<PropertyGroup>
+		<AppName>makeres</AppName>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Include="*.cs"/>
+	</ItemGroup>
+	<Target Name="Build">
+		<Csc Sources="@(Compile)" References="@(Reference)" OutputAssembly="$(AppName).exe" DebugType="Full" TargetType="winexe"/>
+		<Copy
+			SourceFiles="@(Reference)"
+			DestinationFolder="."
+		/>
+	</Target>
+</Project>
