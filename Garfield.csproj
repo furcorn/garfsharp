@@ -35,8 +35,11 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Include="src/*.cs" />
+		<Compile Include="src/*.cs"/>
 		<Reference Include="lib/*.dll"/>
+		<None Include="strips.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<EmbeddedResource Include="resource\resources.resx" LogicalName="GarfSharp.resources"/>
 	</ItemGroup>
 	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
