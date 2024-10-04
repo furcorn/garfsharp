@@ -32,7 +32,8 @@
 		<Reference Include="System.Windows.Forms"/>
 		<Reference Include="System.Xml"/>
 		<Reference Include="System.Net.Http"/>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+		<PackageReference Include="ILMerge" Version="3.0.29"/>
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Include="src/*.cs"/>
@@ -42,5 +43,8 @@
 		</None>
 		<EmbeddedResource Include="resource\resources.resx" LogicalName="GarfSharp.resources"/>
 	</ItemGroup>
+	<Target Name="ILMerge">
+		<Exec Command="$(ILMergeConsolePath) /out:$(OutputPath)GarfSharp_static.exe $(OutputPath)GarfSharp.exe $(OutputPath)Newtonsoft.Json.dll"/>
+	</Target>
 	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
